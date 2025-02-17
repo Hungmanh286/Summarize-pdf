@@ -1,20 +1,10 @@
-import google.generativeai as genai
-import os
-from dotenv import load_dotenv
+from transformers import pipeline
 
-
-load_dotenv()
-
-
-API_KEY = os.getenv("API_KEY")
-
-genai.configure(api_key=API_KEY)
+summarizer = pipeline("summarization", model="openai-community/gpt2")
 
 def summarize_with_llm(text):
-    model = genai.GenerativeModel("gemini-pro")
-    response = model.generate_content(f"Summarize the following text in 3-5 sentences: {text}")
-    return response.text  
-
+    summary = summarizer(text, max_length=512, min_length=30, do_sample=False, temperature=0.7)
+    return summary[0]['summary_text']
 
 text = "Machine learning is a method of data analysis that automates analytical model building..."
 summary = summarize_with_llm(text)
